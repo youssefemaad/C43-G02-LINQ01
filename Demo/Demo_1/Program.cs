@@ -238,6 +238,96 @@ class Program
 
         #endregion
 
+        #region Element Operators - Immediate Execution [Valid Only with Fluent Syntax]
 
+        #region Fluent Syntax
+        var Result12 = ProductsList.First();
+        Result12 = ProductsList.First(p => p.UnitsInStock == 0);
+        Result12 = ProductsList.FirstOrDefault();
+        Result12 = ProductsList.Last();
+        Result12 = ProductsList.Last(p => p.UnitsInStock == 0);
+        Result12 = ProductsList.LastOrDefault();
+
+        List<Product> prod = new List<Product>(); //Empty List
+        // Result12 = prod.First(); //InvalidOperationException
+        // Result12 = prod.First(p => p.UnitsInStock == 0); //InvalidOperationException
+        Result12 = prod.FirstOrDefault(); //null
+        // Result12 = prod.Last(); //InvalidOperationException
+        // Result12 = prod.Last(p => p.UnitsInStock == 0); //InvalidOperationException
+        Result12 = prod.LastOrDefault(); //null
+
+        Result12 = ProductsList.ElementAt(0); // Get Element at Index 0
+        Result12 = ProductsList.ElementAtOrDefault(0); // Get Element at Index 0 or null if not found
+
+        Result12 = ProductsList.Single(p => p.ProductID == 1); // Get Element with ProductID = 1 or throw exception if not found or more than one
+        Result12 = ProductsList.SingleOrDefault(p => p.ProductID == 1); // Get Element with ProductID = 1 or null if not found or more than one
+
+        Console.WriteLine(Result12?.ProductName ?? "Not Found");
+        #endregion
+
+        #region Hybrid Syntax
+
+        var Result13 = (from p in ProductsList
+                       where p.UnitsInStock == 0
+                       select new
+                       {
+                           p.ProductID,
+                           p.ProductName,
+                           p.UnitsInStock
+                       }).First();
+
+        Result13 = (from p in ProductsList
+                    where p.UnitsInStock == 0
+                    select new
+                    {
+                        p.ProductID,
+                        p.ProductName,
+                        p.UnitsInStock
+                    }).FirstOrDefault();
+
+        Console.WriteLine(Result13?.ProductName ?? "Not Found");
+
+        #endregion
+
+        #endregion
+
+        #region Aggregate Operators - Immediate Execution
+
+        // Count
+        var Result14 = ProductsList.Count; // List Operator
+        Result14 = ProductsList.Count(p => p.UnitsInStock == 0); // LINQ Operator
+
+        // Max
+        Result14 = ProductsList.Max(p => p.ProductName.Length);
+
+        // Min
+        var minlength = ProductsList.Min(p => p.ProductName.Length);
+        var Result15 = (from p in ProductsList
+                        where p.ProductName.Length == minlength
+                        select p).First();
+
+        Console.WriteLine(Result14);
+
+        // Sum
+        Result14 = ProductsList.Sum(p => p.UnitsInStock);
+
+
+        string[] Names = { "Ahmed", "Ali", "Omar", "Mohamed"};
+
+        var Result16 = Names.Aggregate((str1, str2) => $"{str1} {str2}");
+
+        /*
+         * str1 = "Ahmed"   , str2 = "Ali" 
+         * str1 => "Ahmed Ali"
+         * 
+         * str1 = "Ahmed Ali"   , str2 = "Omar" 
+         * str1 => "Ahmed Ali Omar" 
+         * 
+         * str1 = "Ahmed Ali Omar"   , str2 = "Mohamed" 
+         * str1 => "Ahmed Ali Omar Mohamed"
+         */
+        Console.WriteLine(Result16);
+
+        #endregion
     }
 }
